@@ -150,8 +150,7 @@ def printMap(m,ct,pairs):
     print("unsigned const char map[%d][%d] = {" % (h,w))
     for i in range(0,h):
         rs=""
-        for j in range(0,w-1):
-            rs=rs+"0x%x," % (nametopatno[m[i][j]])
+      
         print( "{ ",end='')
         print(rs[:-1],end='')
         print("}",end='')
@@ -243,6 +242,7 @@ def makePatterns(l,pairs):
     
 pairs={}
 m=makeMap()
+print(m)
 am=[]
 for r in m:
   am.append(makePatterns(r,pairs))

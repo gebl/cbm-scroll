@@ -1,5 +1,4 @@
-#ifndef _BLT_H
-#define _BLT_H
-
-void Blt();
+#ifndef __BLT_H__
+#define __BLT_H__
+extern void blt();
 #endif

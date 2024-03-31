@@ -3,8 +3,8 @@
     "description": "Project cbm-scroll",
     "toolkit": "llvm",
     "sources": [
-        "blt.s",
-        "main.c"
+        "main.c",
+        "blt.asm"
     ],
     "build": "debug",
     "definitions": [],

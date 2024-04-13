@@ -99,10 +99,10 @@
 #define SPRITE1_PTR 0x01
 #define SPRITE2_PTR 0x02
 #define SPRITE3_PTR 0x03
-#define SPRITE3_PTR 0x04
-#define SPRITE3_PTR 0x05
-#define SPRITE3_PTR 0x06
-#define SPRITE3_PTR 0x07
+#define SPRITE4_PTR 0x04
+#define SPRITE5_PTR 0x05
+#define SPRITE6_PTR 0x06
+#define SPRITE7_PTR 0x07
 
 
 

@@ -4,7 +4,8 @@
     "toolkit": "llvm",
     "sources": [
         "main.c",
-        "blt.asm"
+        "blt.asm",
+        "rnd.asm"
     ],
     "build": "debug",
     "definitions": [],

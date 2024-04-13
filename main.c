@@ -8,6 +8,7 @@
 
 #include "blt.h"
 #include "game.h"
+#include "rnd.h"
 
 #define BSTART 239
 #define LIVESSTART 0
@@ -18,6 +19,19 @@
 
 #define DINOX 130
 #define JUMPCLEAR GROUND - 20
+
+#define LIVES1HI 0x40
+#define LIVES2HI 0x20
+#define LIVES3HI 0x10
+
+#define BARRELHISTART 0x5a
+
+#define BARREL1HI 0x2
+#define BARREL1HI_MASK 0xFD
+#define BARREL2HI 0x4
+#define BARREL2HI_MASK 0xFB
+#define BARREL3HI 0x8
+#define BARREL3HI_MASK 0xF7
 typedef struct viz_struct {
     unsigned x0 : 1;
     unsigned x1 : 1;
@@ -70,7 +84,7 @@ unsigned int game() {
     unsigned char v;
     unsigned int i, j;
     int yv = 0;
-    unsigned char key, lastkey, lastjump, lives;
+    unsigned char key,lastjump, lives;
     viz_struct viz;
 
     score = 0;
@@ -79,6 +93,9 @@ unsigned int game() {
     lastjump = 0;
     v = inb(&VIC.addr);
     key = 0;
+
+    char b1=rnd();
+    char b2=rnd();
 
     curbuffer = SCREEN1;
     curpage = PAGE1;
@@ -167,7 +184,7 @@ unsigned int game() {
     VIC.spr3_x = BSTART;
     VIC.spr3_y = GROUND;
 
-    VIC.spr4_x = LIVESSTART +2*LIVESWIDTH;
+    VIC.spr4_x = LIVESSTART + 2 * LIVESWIDTH;
     VIC.spr4_y = LIVESY;
 
     VIC.spr5_x = LIVESSTART + LIVESWIDTH;
@@ -176,7 +193,8 @@ unsigned int game() {
     VIC.spr6_x = LIVESSTART;
     VIC.spr6_y = LIVESY;
 
-    VIC.spr_hi_x = 0x70;
+    VIC.spr_hi_x =
+        LIVES1HI | LIVES2HI | LIVES3HI | BARREL1HI | BARREL2HI | BARREL3HI;
     VIC.spr0_color = COLOR_WHITE;
     VIC.spr1_color = COLOR_BROWN;
     VIC.spr2_color = COLOR_BROWN;
@@ -186,9 +204,11 @@ unsigned int game() {
     VIC.spr6_color = COLOR_WHITE;
 
     viz.x0 = 1;
-    lives=3;
+    viz.x1 = 0;
+    viz.x2 = 0;
+    lives = 3;
 
-    while (lives>0) {
+    while (lives > 0) {
         // waitvsync();
         score++;
 
@@ -226,7 +246,6 @@ unsigned int game() {
                 yv = -30;
             }
         }
-        lastkey = key;
 
         VIC.spr0_y += (yv / 8);
 
@@ -235,52 +254,98 @@ unsigned int game() {
         }
 
         if (viz.x0) {
-            VIC.spr1_x -= 1;
-            if (VIC.spr1_x > DINOX - 10 && VIC.spr1_x < DINOX + 10 &&
-                VIC.spr0_y > JUMPCLEAR) {
-                lives--;
-                VIC.spr_ena=VIC.spr_ena>>1;
-                VIC.spr1_x = BSTART;
+            VIC.spr1_x--;
+            if (VIC.spr1_x == 0) {
+                if (VIC.spr_hi_x & BARREL1HI) {
+                    VIC.spr_hi_x = VIC.spr_hi_x & BARREL1HI_MASK;
+                    VIC.spr1_x = 255;
+                } else {
+                    VIC.spr1_x = BARRELHISTART;
+                    VIC.spr_hi_x = VIC.spr_hi_x | BARREL1HI;
+                }
             }
-            if (VIC.spr1_x < 5) {
-                VIC.spr1_x = BSTART;
-                score2 = score2 + 2;
+            if (!(VIC.spr_hi_x & BARREL1HI)) {
+                if (VIC.spr1_x > DINOX - 10 && VIC.spr1_x < DINOX + 10 &&
+                    VIC.spr0_y > JUMPCLEAR) {
+                    lives--;
+                    VIC.spr_ena = VIC.spr_ena >> 1;
+                    VIC.spr1_x = BARRELHISTART;
+                    VIC.spr_hi_x = VIC.spr_hi_x | BARREL1HI;
+                }
+                if (VIC.spr1_x < 5) {
+                    VIC.spr1_x = BARRELHISTART;
+                    VIC.spr_hi_x = VIC.spr_hi_x | BARREL1HI;
+                    score2 = score2 + 2;
+                    b1=rnd();
+                    b2=rnd();
+                }
             }
         }
+
         if (viz.x1) {
-            VIC.spr2_x -= 1;
-            if (VIC.spr2_x > DINOX - 10 && VIC.spr2_x < DINOX + 10 &&
-                VIC.spr0_y > JUMPCLEAR) {
-                viz.x1 = 0;
-                lives--;
-                VIC.spr_ena=VIC.spr_ena>>1;
-                VIC.spr2_x = BSTART;
-            } else if (VIC.spr2_x < 5) {
-                viz.x1 = 0;
-                VIC.spr2_x = BSTART;
-                score2 = score2 + 20;
+            VIC.spr2_x--;
+            if (VIC.spr2_x == 0) {
+                if (VIC.spr_hi_x & BARREL2HI) {
+                    VIC.spr_hi_x = VIC.spr_hi_x & BARREL2HI_MASK;
+                    VIC.spr2_x = 255;
+                } else {
+                    VIC.spr2_x = BARRELHISTART;
+                    VIC.spr_hi_x = VIC.spr_hi_x | BARREL2HI;
+                }
+            }
+
+            if (!(VIC.spr_hi_x & BARREL2HI)) {
+                if (VIC.spr2_x > DINOX - 10 && VIC.spr2_x < DINOX + 10 &&
+                    VIC.spr0_y > JUMPCLEAR) {
+                    lives--;
+                    VIC.spr_ena = VIC.spr_ena >> 1;
+                    VIC.spr2_x = BARRELHISTART;
+                    VIC.spr_hi_x = VIC.spr_hi_x | BARREL2HI;
+                }
+                if (VIC.spr2_x < 5) {
+                    VIC.spr2_x = BARRELHISTART;
+                    VIC.spr_hi_x = VIC.spr_hi_x | BARREL2HI;
+                    score2 = score2 + 2;
+                    viz.x1 = 0;
+                }
             }
         } else {
-            if (score % 500 == 0) {
+            if (score % (b1/2) == 0) {
                 viz.x1 = 1;
+                b1=rnd();
             }
         }
         if (viz.x2) {
-            VIC.spr3_x -= 1;
-            if (VIC.spr3_x > DINOX - 10 && VIC.spr3_x < DINOX + 10 &&
-                VIC.spr0_y > JUMPCLEAR) {
-                viz.x2 = 0;
-                lives--;
-                VIC.spr_ena=VIC.spr_ena>>1;
-                VIC.spr3_x = BSTART;
-            } else if (VIC.spr3_x < 5) {
-                viz.x2 = 0;
-                VIC.spr3_x = BSTART;
-                score2 = score2 + 10;
+            VIC.spr3_x--;
+            if (VIC.spr3_x == 0) {
+                if (VIC.spr_hi_x & BARREL3HI) {
+                    VIC.spr_hi_x = VIC.spr_hi_x & BARREL3HI_MASK;
+                    VIC.spr3_x = 255;
+                } else {
+                    VIC.spr3_x = BARRELHISTART;
+                    VIC.spr_hi_x = VIC.spr_hi_x | BARREL3HI;
+                }
+            }
+
+            if (!(VIC.spr_hi_x & BARREL3HI)) {
+                if (VIC.spr3_x > DINOX - 10 && VIC.spr3_x < DINOX + 10 &&
+                    VIC.spr0_y > JUMPCLEAR) {
+                    lives--;
+                    VIC.spr_ena = VIC.spr_ena >> 1;
+                    VIC.spr3_x = BARRELHISTART;
+                    VIC.spr_hi_x = VIC.spr_hi_x | BARREL3HI;
+                }
+                if (VIC.spr3_x < 5) {
+                    VIC.spr3_x = BARRELHISTART;
+                    VIC.spr_hi_x = VIC.spr_hi_x | BARREL3HI;
+                    score2 = score2 + 2;
+                    viz.x2 = 0;
+                }
             }
         } else {
-            if (score % 350 == 0) {
+            if (score % (b2/5) == 0) {
                 viz.x2 = 1;
+                b2=rnd();
             }
         }
     }
@@ -295,8 +360,20 @@ int main() {
     unsigned int score;
     bgcolor(COLOR_LIGHTGREEN);
     bordercolor(COLOR_BLACK);
+    rnd_init();
+    printf("Dino Run\n");
+    printf("Press space to jump\n");
+    printf("Avoid the barrels\n");
+    printf("Score 2 points for each barrel you pass\n");
+    printf("Press RUN/STOP to exit\n");
+    printf("Press any key to start\n");
+    
+    cbm_k_getin();
+    while (cbm_k_getin() != 0);
+    
     while (1) {
         score = game();
+        printf("Score: %d\n", score);
     }
 
     return 0;

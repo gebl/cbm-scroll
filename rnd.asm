@@ -1,6 +1,7 @@
-.global rnd_init
+.global _rnd_init
+.global _rnd
 
-rnd_init:
+_rnd_init:
     LDA #$FF  ; maximum frequency value
     STA $D40E ; voice 3 frequency low byte
     STA $D40F ; voice 3 frequency high byte
@@ -9,6 +10,6 @@ rnd_init:
     RTS
 
 .global rnd
-rnd:
+_rnd:
     LDA $D41B
     RTS

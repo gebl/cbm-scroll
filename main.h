@@ -142,9 +142,6 @@
 
 #define WRAP ((MAPCOLS - 32) * 8)
 
-unsigned char *src;
-unsigned char *dst;
-
 static unsigned char *curbuffer;
 static unsigned int curpage;
 static unsigned char *backbuffer;

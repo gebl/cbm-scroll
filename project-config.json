@@ -1,7 +1,7 @@
 {
     "name": "cbm-scroll",
     "description": "Project cbm-scroll",
-    "toolkit": "llvm",
+    "toolkit": "cc65",
     "sources": [
         "main.c",
         "blt.asm",

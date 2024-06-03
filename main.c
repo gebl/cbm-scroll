@@ -51,10 +51,10 @@ void initPat() {
 }
 
 void fillSit(unsigned int frame, unsigned int row) {
-    dst = backbuffer + ((row) * 40);
-    src = (unsigned char *)&map[row] + frame;
-
+    dst = (unsigned char *)(backbuffer + ((row) * 40));
+    src = (unsigned char *)(map[row]+frame);
     blt();
+    
 }
 
 void initColorTable() {
@@ -84,8 +84,9 @@ unsigned int game() {
     unsigned char v;
     unsigned int i, j;
     int yv = 0;
-    unsigned char key,lastjump, lives;
+    unsigned char key, lastjump, lives;
     viz_struct viz;
+    char b1, b2;
 
     score = 0;
     score2 = 0;
@@ -94,8 +95,8 @@ unsigned int game() {
     v = inb(&VIC.addr);
     key = 0;
 
-    char b1=rnd();
-    char b2=rnd();
+    b1 = rnd();
+    b2 = rnd();
 
     curbuffer = SCREEN1;
     curpage = PAGE1;
@@ -137,6 +138,7 @@ unsigned int game() {
     outb((unsigned char *)SCREEN1 + SPRITE1, SPRITE2_PTR);
     outb((unsigned char *)SCREEN2 + SPRITE1, SPRITE3_PTR);
     // barrel2
+
     outb((unsigned char *)SCREEN1 + SPRITE2, SPRITE3_PTR);
     outb((unsigned char *)SCREEN2 + SPRITE2, SPRITE2_PTR);
     // barrel3
@@ -209,8 +211,8 @@ unsigned int game() {
     lives = 3;
 
     while (lives > 0) {
-        // waitvsync();
         score++;
+
 
         if (score % 8 == 0) {
             frame++;
@@ -221,6 +223,7 @@ unsigned int game() {
             temppage = curpage;
             curpage = backpage;
             backpage = temppage;
+            waitvsync();
             outb(&VIC.addr, curpage);
         }
         outb(XSCROLL, (inb(XSCROLL) & 0xF8) + (7 - score % 8));
@@ -276,8 +279,8 @@ unsigned int game() {
                     VIC.spr1_x = BARRELHISTART;
                     VIC.spr_hi_x = VIC.spr_hi_x | BARREL1HI;
                     score2 = score2 + 2;
-                    b1=rnd();
-                    b2=rnd();
+                    b1 = rnd();
+                    b2 = rnd();
                 }
             }
         }
@@ -310,9 +313,9 @@ unsigned int game() {
                 }
             }
         } else {
-            if (score % (b1/2) == 0) {
+            if (score % (b1 / 2) == 0) {
                 viz.x1 = 1;
-                b1=rnd();
+                b1 = rnd();
             }
         }
         if (viz.x2) {
@@ -343,9 +346,9 @@ unsigned int game() {
                 }
             }
         } else {
-            if (score % (b2/5) == 0) {
+            if (score % (b2 / 5) == 0) {
                 viz.x2 = 1;
-                b2=rnd();
+                b2 = rnd();
             }
         }
     }
@@ -367,10 +370,10 @@ int main() {
     printf("Score 2 points for each barrel you pass\n");
     printf("Press RUN/STOP to exit\n");
     printf("Press any key to start\n");
-    
+
     cbm_k_getin();
     while (cbm_k_getin() != 0);
-    
+
     while (1) {
         score = game();
         printf("Score: %d\n", score);

@@ -91,47 +91,47 @@ _blt:
     sta (ptr2),y
     iny
 
-        lda (ptr1),y
-    sta (ptr2),y
-    iny
-
-    lda (ptr1),y
-    sta (ptr2),y
-    iny
-    
-    lda (ptr1),y
-    sta (ptr2),y
-    iny
-    
-    lda (ptr1),y
-    sta (ptr2),y
-    iny
-    
-    lda (ptr1),y
-    sta (ptr2),y
-    iny
-    
-    lda (ptr1),y
-    sta (ptr2),y
-    iny
-    
-    lda (ptr1),y
-    sta (ptr2),y
-    iny
-    
-    lda (ptr1),y
-    sta (ptr2),y
-    iny
-    
-    lda (ptr1),y
-    sta (ptr2),y
-    iny
-    
     lda (ptr1),y
     sta (ptr2),y
     iny
 
-        lda (ptr1),y
+    lda (ptr1),y
+    sta (ptr2),y
+    iny
+    
+    lda (ptr1),y
+    sta (ptr2),y
+    iny
+    
+    lda (ptr1),y
+    sta (ptr2),y
+    iny
+    
+    lda (ptr1),y
+    sta (ptr2),y
+    iny
+    
+    lda (ptr1),y
+    sta (ptr2),y
+    iny
+    
+    lda (ptr1),y
+    sta (ptr2),y
+    iny
+    
+    lda (ptr1),y
+    sta (ptr2),y
+    iny
+    
+    lda (ptr1),y
+    sta (ptr2),y
+    iny
+    
+    lda (ptr1),y
+    sta (ptr2),y
+    iny
+
+    lda (ptr1),y
     sta (ptr2),y
     iny
 

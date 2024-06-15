@@ -2,6 +2,7 @@
 
 #include <c64.h>
 #include <cbm.h>
+#include <conio.h>
 #include <peekpoke.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -32,15 +33,12 @@
 #define BARREL2HI_MASK 0xFB
 #define BARREL3HI 0x8
 #define BARREL3HI_MASK 0xF7
+
 typedef struct viz_struct {
     unsigned x0 : 1;
     unsigned x1 : 1;
     unsigned x2 : 1;
 } viz_struct;
-
-void bordercolor(unsigned char color) { POKE(53280, color); }
-
-void bgcolor(unsigned char color) { POKE(53281, color); }
 
 void initPat() {
     unsigned int i;
@@ -52,9 +50,8 @@ void initPat() {
 
 void fillSit(unsigned int frame, unsigned int row) {
     dst = (unsigned char *)(backbuffer + ((row) * 40));
-    src = (unsigned char *)(map[row]+frame);
+    src = (unsigned char *)(map[row] + frame);
     blt();
-    
 }
 
 void initColorTable() {
@@ -213,7 +210,6 @@ unsigned int game() {
     while (lives > 0) {
         score++;
 
-
         if (score % 8 == 0) {
             frame++;
             frame %= (MAPCOLS - 40);
@@ -353,6 +349,8 @@ unsigned int game() {
         }
     }
 
+    VIC.spr_ena = 0x00;
+
     outb(&VIC.addr, v);
     outb(&CIA2.pra, block);
 
@@ -361,21 +359,25 @@ unsigned int game() {
 
 int main() {
     unsigned int score;
-    bgcolor(COLOR_LIGHTGREEN);
-    bordercolor(COLOR_BLACK);
+    clrscr();
+    bgcolor((unsigned char)COLOR_LIGHTGREEN);
+    bordercolor((unsigned char)COLOR_BLACK);
     rnd_init();
+
+    clrscr();
+
     printf("Dino Run\n");
     printf("Press space to jump\n");
     printf("Avoid the barrels\n");
     printf("Score 2 points for each barrel you pass\n");
     printf("Press RUN/STOP to exit\n");
-    printf("Press any key to start\n");
-
-    cbm_k_getin();
-    while (cbm_k_getin() != 0);
+    printf("Press space key to start\n");
 
     while (1) {
+        while (cbm_k_getin() !=' ') {
+        }
         score = game();
+        clrscr();
         printf("Score: %d\n", score);
     }
 
